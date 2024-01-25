@@ -1,13 +1,39 @@
-"""Здесь надо написать тесты с использованием pytest для модуля item."""
-from src.item import Item
-
-
 def test_calculate_total_price():
-    item = Item("Смартфон", 10000, 20)
-    assert item.calculate_total_price() == 200000
+    item = Item("Телевизор", 15000, 10)
+    assert item.calculate_total_price() == 150000
 
 def test_apply_discount():
-    item = Item("Смартфон", 10000, 20)
-    Item.pay_rate = 0.8
+    item = Item("Телевизор", 15000, 10)
+    Item.pay_rate = 0.9
     item.apply_discount()
-    assert item.price == 8000.0
+    assert item.price == 13500.0
+
+def test_calculate_total_price_with_zero_quantity():
+    item = Item("Книга", 500, 0)
+    assert item.calculate_total_price() == 0
+
+def test_apply_discount_with_zero_price():
+    item = Item("Книга", 500, 0)
+    Item.pay_rate = 0.7
+    item.apply_discount()
+    assert item.price == 0.0
+
+def test_calculate_total_price_with_negative_price():
+    item = Item("Компьютер", -50000, 5)
+    assert item.calculate_total_price() == 0
+
+def test_apply_discount_with_negative_price():
+    item = Item("Компьютер", -50000, 5)
+    Item.pay_rate = 0.85
+    item.apply_discount()
+    assert item.price == 0.0
+
+def test_calculate_total_price_with_negative_quantity():
+    item = Item("Наушники", 3000, -3)
+    assert item.calculate_total_price() == 0
+
+def test_apply_discount_with_negative_quantity():
+    item = Item("Наушники", 3000, -3)
+    Item.pay_rate = 0.95
+    item.apply_discount()
+    assert item.price == 0.0
