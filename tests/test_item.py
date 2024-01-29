@@ -37,3 +37,11 @@ def test_apply_discount_with_negative_quantity():
     Item.pay_rate = 0.95
     item.apply_discount()
     assert item.price == 0.0
+
+def test_item_repr():
+    item = Item("Смартфон", 10000, 20)
+    assert repr(item) == "Item(name=Смартфон, price=10000, quantity=20)"
+
+def test_item_str():
+    item = Item("Смартфон", 10000, 20)
+    assert str(item) == "Item: Смартфон, Price: 10000, Quantity: 20"
