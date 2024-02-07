@@ -4,6 +4,9 @@ class Phone(Item):
         self.sim_card_quantity = sim_card_quantity
 
     def __add__(self, other):
-        if isinstance(other, (Phone, Item)):
+        if isinstance(other, Phone):
             return self.quantity + other.quantity
-        raise TypeError("Unsupported operand type for +: 'Phone' or 'Item' and '{}'".format(type(other)))
+        elif isinstance(other, Item):
+            raise TypeError("Unsupported operand type for +: 'Phone' and 'Item'")
+        else:
+            raise TypeError("Unsupported operand type for +: 'Phone' and '{}'".format(type(other)))
