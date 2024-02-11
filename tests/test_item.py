@@ -45,3 +45,9 @@ def test_item_repr():
 def test_item_str():
     item = Item("Смартфон", 10000, 20)
     assert str(item) == "Item: Смартфон, Price: 10000, Quantity: 20"
+
+def test_add_different_types():
+    item1 = Item("Телевизор", 15000, 10)
+    phone = Phone("Смартфон", 10000, 20, 2)
+    with pytest.raises(TypeError):
+        item1 + phone
