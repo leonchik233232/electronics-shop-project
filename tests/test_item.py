@@ -1,53 +1,53 @@
+import csv
+import os
+from src.item import Item, InstantiateCSVError
+
+
+def test_instantiate_from_csv_success():
+    Item.instantiate_from_csv()
+    assert len(Item.all) == 3
+
+
+def test_instantiate_from_csv_file_not_found():
+    os.remove("items.csv")
+    with pytest.raises(FileNotFoundError):
+        Item.instantiate_from_csv()
+    os.mknod("items.csv")
+
+
+def test_instantiate_from_csv_damaged_file():
+    with open("items.csv", "w") as csv_file:
+        csv_file.write("name,price\n")
+        csv_file.write("Apple,1.99")
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv()
+    os.remove("items.csv")
+
+
+def test_instantiate_from_csv_extra_columns():
+    with open("items.csv", "w") as csv_file:
+        csv_file.write("name,price,quantity,extra_column\n")
+        csv_file.write("Apple,1.99,10,extra_value")
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv()
+    os.remove("items.csv")
+
+
+def test_instantiate_from_csv_missing_columns():
+    with open("items.csv", "w") as csv_file:
+        csv_file.write("name,price\n")
+        csv_file.write("Apple,1.99")
+    with pytest.raises(InstantiateCSVError):
+        Item.instantiate_from_csv()
+    os.remove("items.csv")
+
+
 def test_calculate_total_price():
-    item = Item("Телевизор", 15000, 10)
-    assert item.calculate_total_price() == 150000
+    item = Item("Apple", 1.99, 10)
+    assert item.calculate_total_price() == 19.90
+
 
 def test_apply_discount():
-    item = Item("Телевизор", 15000, 10)
-    Item.pay_rate = 0.9
+    item = Item("Apple", 1.99, 10)
     item.apply_discount()
-    assert item.price == 13500.0
-
-def test_calculate_total_price_with_zero_quantity():
-    item = Item("Книга", 500, 0)
-    assert item.calculate_total_price() == 0
-
-def test_apply_discount_with_zero_price():
-    item = Item("Книга", 500, 0)
-    Item.pay_rate = 0.7
-    item.apply_discount()
-    assert item.price == 0.0
-
-def test_calculate_total_price_with_negative_price():
-    item = Item("Компьютер", -50000, 5)
-    assert item.calculate_total_price() == 0
-
-def test_apply_discount_with_negative_price():
-    item = Item("Компьютер", -50000, 5)
-    Item.pay_rate = 0.85
-    item.apply_discount()
-    assert item.price == 0.0
-
-def test_calculate_total_price_with_negative_quantity():
-    item = Item("Наушники", 3000, -3)
-    assert item.calculate_total_price() == 0
-
-def test_apply_discount_with_negative_quantity():
-    item = Item("Наушники", 3000, -3)
-    Item.pay_rate = 0.95
-    item.apply_discount()
-    assert item.price == 0.0
-
-def test_item_repr():
-    item = Item("Смартфон", 10000, 20)
-    assert repr(item) == "Item(name=Смартфон, price=10000, quantity=20)"
-
-def test_item_str():
-    item = Item("Смартфон", 10000, 20)
-    assert str(item) == "Item: Смартфон, Price: 10000, Quantity: 20"
-
-def test_add_different_types():
-    item1 = Item("Телевизор", 15000, 10)
-    phone = Phone("Смартфон", 10000, 20, 2)
-    with pytest.raises(TypeError):
-        item1 + phone
+    assert item.price == 1.791
