@@ -1,61 +1,104 @@
 import csv
-from typing import List
+
 
 class InstantiateCSVError(Exception):
-    """
-    Exception raised when the CSV file is damaged or missing required columns.
-    """
-    pass
+    def __init__(self, *args, **kwargs):
+        self.massage = "Файл item.csv поврежден"
 
 
 class Item:
-    all: List["Item"] = []
+    """
+    Класс для представления товара в магазине.
+    """
+    pay_rate = 1.0
+    all = []
 
     def __init__(self, name: str, price: float, quantity: int) -> None:
         """
-        Create an instance of the Item class.
+        Создание экземпляра класса item.
+
+        :param name: Название товара.
+        :param price: Цена за единицу товара.
+        :param quantity: Количество товара в магазине.
         """
-        self.name = name
+        self.__name = name
         self.price = price
         self.quantity = quantity
         self.all.append(self)
 
-    @classmethod
-    def instantiate_from_csv(cls):
-        """
-        Create a list of Item objects from a CSV file.
-
-        :raises FileNotFoundError: if the CSV file is not found.
-        :raises InstantiateCSVError: if the CSV file is damaged or missing required columns.
-        """
-        try:
-            with open("items.csv", "r") as csv_file:
-                reader = csv.reader(csv_file)
-                next(reader)  # Skip the header row
-                for row in reader:
-                    if len(row) != 3:
-                        raise InstantiateCSVError("CSV file is damaged or missing required columns")
-                    name, price, quantity = row
-                    Item(name, float(price), int(quantity))
-        except FileNotFoundError:
-            raise FileNotFoundError("File items.csv not found")
-
     def calculate_total_price(self) -> float:
         """
-        Calculate the total price of this item in the store.
+        Рассчитывает общую стоимость конкретного товара в магазине.
 
-        :return: The total price of the item.
+        :return: Общая стоимость товара.
         """
-        return self.price * self.quantity
+        full_price = self.price * self.quantity
+        return full_price
 
     def apply_discount(self) -> None:
         """
-        Apply the store's discount to this item.
+        Применяет установленную скидку для конкретного товара.
         """
-        self.price = self.price * self.pay_rate
+        self.price *= self.pay_rate
+
+    @property
+    def name(self):
+        return self.__name
+
+    @name.setter
+    def name(self, name):
+        """
+        Функция проверяет длину наименования товара, чтобы было не более 10 символов
+        """
+        if len(name) > 10:
+            self.__name = name[:10]
+        else:
+            self.__name = name
+
+    @classmethod
+    def instantiate_from_csv(cls, csv_file):
+        """
+        Добавление экземпляра класса из csv файла
+        """
+        try:
+            cls.all = []
+            with open(csv_file, newline="", encoding="windows-1251") as file:
+                data = csv.DictReader(file)
+                for item in data:
+                    cls(str(item["name"]), float(item["price"]), int(item["quantity"]))
+
+        except (KeyError, ValueError):
+            raise InstantiateCSVError("Файл item.csv поврежден")
+        except FileNotFoundError:
+            raise FileNotFoundError("Отсутствует файл item.csv")
+
+    @staticmethod
+    def string_to_number(str_number):
+        """
+        Возвращает число из числа-строки
+        """
+        number = float(str_number)
+        return int(number)
 
     def __repr__(self):
-        return f"Item(name={self.name}, price={self.price}, quantity={self.quantity})"
+        """
+        ___repr___
+        Для программистов
+        """
+        return f"Item('{self.__name}', {self.price}, {self.quantity})"
 
     def __str__(self):
-        return f"Item: {self.name}, Price: {self.price}, Quantity: {self.quantity}"
+        """
+        __str___
+        Для юзеров
+        """
+        return self.__name
+
+    def __add__(self, other):
+        """
+        Реализация возможности сложения экземпляров класса `Phone` и `Item`
+        (сложение по количеству товара в магазине)
+        """
+        if isinstance(other, Item):
+            return self.quantity + other.quantity
+        return ValueError("Складывать можно только объекты классов с родительским классом Item")

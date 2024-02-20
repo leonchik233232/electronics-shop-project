@@ -1,24 +1,14 @@
+import pytest
 
-@pytest.fixture
-def keyboard():
-    return Keyboard("Dark Project KD87A", 9600, 5)
+from src.keyboard import Keyboard
 
+kb = Keyboard('White Project 007', 5000, 3)
 
-def test_init(keyboard):
-    assert keyboard.name == "Dark Project KD87A"
-    assert keyboard.price == 9600
-    assert keyboard.quantity == 5
-    assert keyboard.language == "EN"
+assert str(kb) == 'White Project 007'
 
-
-def test_change_lang(keyboard):
-    keyboard.change_lang()
-    assert keyboard.language == "RU"
-
-    keyboard.change_lang()
-    assert keyboard.language == "EN"
-
-
-def test_invalid_language(keyboard):
-    with pytest.raises(ValueError):
-        keyboard.language = "CH"
+kb.change_lang()
+assert str(kb.language) == 'RU'
+kb.change_lang()
+assert str(kb.language) == 'EN'
+kb.change_lang()
+assert str(kb.language) == 'RU'

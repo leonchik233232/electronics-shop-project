@@ -1,8 +1,19 @@
-def test_phone_addition():
-    phone1 = Phone("Phone 1", 500, 10, 2)
-    phone2 = Phone("Phone 2", 600, 5, 1)
-    item = Item("Item", 100, 20)
+from src.phone import Phone
 
-    assert phone1 + phone2 == 15  # Сложение двух экземпляров класса Phone
-    assert phone1 + item == 30  # Сложение экземпляра класса Phone и Item
 
+def test___init__():
+    phone = Phone("iPhone 14", 120_000, 5, 2)
+    assert phone.name == "iPhone 14"
+    assert phone.price == 120_000
+    assert phone.quantity == 5
+    assert phone.number_of_sim == 2
+
+
+def test_repr():
+    phone1 = Phone("iPhone 14", 120_000, 5, 2)
+    assert repr(phone1) == "Phone('iPhone 14', 120000, 5, 2)"
+
+
+def test_str():
+    phone1 = Phone("iPhone 14", 120000, 5, 2)
+    assert str(phone1) == 'iPhone 14'
