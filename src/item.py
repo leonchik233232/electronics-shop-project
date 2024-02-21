@@ -55,22 +55,22 @@ class Item:
         else:
             self.__name = name
 
+
     @classmethod
     def instantiate_from_csv(cls, csv_file):
         """
         Добавление экземпляра класса из csv файла
         """
-        try:
-            cls.all = []
-            with open(csv_file, newline="", encoding="windows-1251") as file:
-                data = csv.DictReader(file)
-                for item in data:
-                    cls(str(item["name"]), float(item["price"]), int(item["quantity"]))
-
-        except (KeyError, ValueError):
-            raise InstantiateCSVError("Файл item.csv поврежден")
-        except FileNotFoundError:
+        if not os.path.exists(csv_file):
             raise FileNotFoundError("Отсутствует файл item.csv")
+
+        with open(csv_file, newline="", encoding="windows-1251") as file:
+            data = csv.DictReader(file)
+            for item in data:
+                if len(item) != 3:
+                    raise InstantiateCSVError("Файл item.csv поврежден")
+
+                cls(str(item["name"]), float(item["price"]), int(item["quantity"]))
 
     @staticmethod
     def string_to_number(str_number):
